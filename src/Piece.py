@@ -1,4 +1,5 @@
 import pygame
+import os
 from pygame import gfxdraw
 PieceName0 = {0: "将", 1: "士", 2: "象", 3: "馬", 4: "車", 5: "砲", 6: "卒"}
 PieceName1 = {0: "帥", 1: "仕", 2: "相", 3: "傌", 4: "俥 ", 5: "炮", 6: "兵"}
@@ -23,8 +24,9 @@ class Piece(pygame.sprite.Sprite):
 
     def initialize(self):
         self.image = pygame.Surface((self.cellSize, self.cellSize), pygame.SRCALPHA)
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        imagePath = os.path.join(script_dir, f"imgs\{self.type}_{self.playerType}.png")
 
-        imagePath = f"imgs/{self.type}_{self.playerType}.png"
         pieceImage = pygame.image.load(imagePath).convert_alpha()
         pieceImage = pygame.transform.scale(pieceImage, (self.cellSize, self.cellSize))
         self.image.blit(pieceImage, (0, 0))
@@ -32,14 +34,19 @@ class Piece(pygame.sprite.Sprite):
 
     def reDrawImage(self):
         self.image.fill(self.empty)
-        self.image.blit(self.text, self.textpos)
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        imagePath = os.path.join(script_dir, f"imgs\{self.type}_{self.playerType}.png")
+        pieceImage = pygame.image.load(imagePath).convert_alpha()
+        pieceImage = pygame.transform.scale(
+            pieceImage, (self.cellSize, self.cellSize))
+        self.image.blit(pieceImage, (0, 0))
 
     def draw(self, screen):
         if not self.selected:
             self.reDrawImage()
-        else:
-            gfxdraw.aacircle(self.image, self.cellSize // 2,
-                             self.cellSize // 2, 20, self.color)
+        # else:
+        #     gfxdraw.aacircle(self.image, self.cellSize // 2,
+        #                      self.cellSize // 2, 20, self.color)
         screen.blit(self.image, self.rect)
 
     def select(self):
