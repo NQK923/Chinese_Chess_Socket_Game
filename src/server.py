@@ -1,11 +1,11 @@
 import socket
 import threading
-import time
 import pickle
 
 PORT = 5050
 DISCONNECTMESSAGE = "!disconnect"
-SERVER = socket.gethostbyname(socket.gethostname())
+# Sử dụng địa chỉ localhost
+SERVER = "127.0.0.1"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -16,29 +16,27 @@ server.bind(ADDR)
 BoardData = None
 chessPlayer = []
 
-
 def handle_client(socketNumber, address, ID):
-    print(address, "player connected")
+    print(f"{address} player connected")
     connected = True
     while connected:
         data = socketNumber.recv(4098)
         if data:
             chessPlayer[(1+ID) % 2].send(data)
             print(pickle.loads(data))
+        else:
+            connected = False
 
     socketNumber.close()
 
-
-counter = 0
-
-
 def start():
     global counter
+    counter = 0
     print("server started running, address is ", SERVER)
     server.listen()
     while True:
         clientSocketNumber, addr = server.accept()
-        if len(chessPlayer) < 3:
+        if len(chessPlayer) < 2:
             chessPlayer.append(clientSocketNumber)
             if len(chessPlayer) == 2:
                 for i in range(len(chessPlayer)):
@@ -47,8 +45,6 @@ def start():
                 clientSocketNumber, addr, counter))
             thread.start()
             counter += 1
-            print(counter)
-            print("active connection", threading.activeCount()-1)
-
+            print(f"{counter} connections active")
 
 start()
