@@ -1,53 +1,46 @@
 import socket
 import threading
+import time
 import pickle
 
-PORT = 5050
-DISCONNECTMESSAGE = "!disconnect"
-# Listen on all network interfaces to allow external connections
+PORT=5050   #1024-65535
+DISCONNECTMESSAGE="!disconnect"
 SERVER = "192.168.1.195"
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server=socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
 
-ADDR = (SERVER, PORT)
+ADDR=(SERVER,PORT)
 
-server.bind(ADDR)
+server.bind(ADDR) 
 
-BoardData = None
-chessPlayer = []
-
-def handle_client(socketNumber, address, ID):
-    print(f"{address} player connected")
-    connected = True
+BoardData=None
+chessPlayer=[] 
+def handle_client(socketNumber,address,ID):
+    print(address,"player connected")
+    connected=True
     while connected:
-        data = socketNumber.recv(4098)
+        data=socketNumber.recv(4098)
         if data:
-            # Ensure there's another player connected before attempting to send data
-            if len(chessPlayer) > 1:
-                chessPlayer[(1+ID) % 2].send(data)
-                print(pickle.loads(data))
-            else:
-                print("Waiting for another player.")
-        else:
-            connected = False
+            chessPlayer[(1+ID)%2].send(data)
+            print(pickle.loads(data))
 
     socketNumber.close()
 
+counter=0
 def start():
     global counter
-    counter = 0
-    print("Server started running, address is ", SERVER)
-    server.listen()
+    print("server started running, address is ",SERVER)
+    server.listen() 
     while True:
-        clientSocketNumber, addr = server.accept()
-        if len(chessPlayer) < 2:
+        clientSocketNumber,addr=server.accept() 
+        if len(chessPlayer)<3:
             chessPlayer.append(clientSocketNumber)
-            if len(chessPlayer) == 2:
+            if len(chessPlayer)==2:
                 for i in range(len(chessPlayer)):
                     chessPlayer[i].send(str(i).encode())
-            thread = threading.Thread(target=handle_client, args=(clientSocketNumber, addr, counter))
+            thread=threading.Thread(target=handle_client,args=(clientSocketNumber,addr,counter))
             thread.start()
-            counter += 1
-            print(f"{counter} connections active")
-
+            counter+=1
+            print(counter)
+            print("active connection",threading.activeCount()-1)
 start()
