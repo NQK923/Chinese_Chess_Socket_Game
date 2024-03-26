@@ -25,7 +25,7 @@ class Piece(pygame.sprite.Sprite):
     def initialize(self):
         self.image = pygame.Surface((self.cellSize, self.cellSize), pygame.SRCALPHA)
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        imagePath = os.path.join(script_dir, f"imgs\{self.type}_{self.playerType}.png")
+        imagePath = os.path.join(script_dir, "imgs", f"{self.type}_{self.playerType}.png")
 
         pieceImage = pygame.image.load(imagePath).convert_alpha()
         pieceImage = pygame.transform.scale(pieceImage, (self.cellSize, self.cellSize))
@@ -35,18 +35,16 @@ class Piece(pygame.sprite.Sprite):
     def reDrawImage(self):
         self.image.fill(self.empty)
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        imagePath = os.path.join(script_dir, f"imgs\{self.type}_{self.playerType}.png")
+        imagePath = os.path.join(script_dir, "imgs", f"{self.type}_{self.playerType}.png")
         pieceImage = pygame.image.load(imagePath).convert_alpha()
         pieceImage = pygame.transform.scale(
             pieceImage, (self.cellSize, self.cellSize))
         self.image.blit(pieceImage, (0, 0))
 
+
     def draw(self, screen):
         if not self.selected:
             self.reDrawImage()
-        # else:
-        #     gfxdraw.aacircle(self.image, self.cellSize // 2,
-        #                      self.cellSize // 2, 20, self.color)
         screen.blit(self.image, self.rect)
 
     def select(self):

@@ -71,7 +71,7 @@ while True:
     screen.fill((255, 255, 255))
     if ready:
         n = Network()  # Assuming 'n' should be the network client instance
-        threading.Thread(target=update_board_data, args=(n, board), daemon=True).start()
+        threading.Thread(target=update_board_data, args=(n, Board), daemon=True).start()
         main(screen, playerType)
         break
     elif clicked:

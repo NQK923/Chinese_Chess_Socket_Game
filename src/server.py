@@ -5,7 +5,7 @@ import pickle
 PORT = 5050
 DISCONNECTMESSAGE = "!disconnect"
 # Listen on all network interfaces to allow external connections
-SERVER = "0.0.0.0"
+SERVER = "192.168.1.195"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
