@@ -3,37 +3,61 @@ import pickle
 
 class Network:
     def __init__(self):
-        self.client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.port=5050
-        self.ServerAddress = "192.168.1.195"
-        print("initializating now")
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.port = 5050
 
+        self.serverAddress = "192.168.1.195"
+        print("Initializing now...")
         self.connect()
+
     def connect(self):
-        self.client.connect((self.ServerAddress,self.port))
-        print("client is trying to connect")
+        try:
+            self.client.connect((self.serverAddress, self.port))
+            print("Client is trying to connect...")
+        except socket.error as e:
+            print(f"Error connecting to server: {e}")
 
     def disconnect(self):
-        self.client.send("!disconnect".encode())
-        self.client.close()
-    def send(self,data):
-        data_string = pickle.dumps(data)
-        print("sending data")
-        print(data)
-        self.client.send(data_string)
-        print(pickle.loads(data_string))
+        try:
+            self.client.send("!disconnect".encode())
+            self.client.close()
+            print("Disconnected from server.")
+        except socket.error as e:
+            print(f"Error disconnecting from server: {e}")
+
+    def send(self, data):
+        try:
+            data_string = pickle.dumps(data)
+            print("Sending data:", data)
+            self.client.send(data_string)
+            print("Data sent successfully.")
+        except socket.error as e:
+            print(f"Error sending data: {e}")
+
     def receiveID(self):
-        data=self.client.recv(4096)
-        return data
+        try:
+            data = self.client.recv(4096)
+            return data.decode()
+        except socket.error as e:
+            print(f"Error receiving ID: {e}")
+            return None
+
     def receive(self):
-        data=self.client.recv(4096)
-        return pickle.loads(data)
+        try:
+            data = self.client.recv(4096)
+            return pickle.loads(data)
+        except socket.error as e:
+            print(f"Error receiving data: {e}")
+            return None
 
 if __name__ == "__main__":
-    n=Network()
+    network = Network()
+    print("Hi, I am the client.")
+
     while True:
-        print("hi i am the client")
-
-
-        data=n.receive()
-        print(data)
+        data = network.receive()
+        if data:
+            print(data)
+        else:
+            print("No data received, or connection error.")
+            break

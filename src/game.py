@@ -8,7 +8,6 @@ import threading
 
 
 def main(screen, ID):
-    screen.fill((155, 255, 255))
     pygame.display.flip()
     board = Board(n, ID, screen, 50)
     board.initializePieces()
@@ -58,7 +57,7 @@ textPos.center = (screen.get_rect().centerx, 100)
 
 def wait(client):
     global playerType, ready
-    playerType = int(client.receiveID().decode())
+    playerType = int(client.receiveID())
     print("playerTYpe ID is ", playerType)
     ready = True
 
@@ -74,7 +73,7 @@ def update(client, boardChess):
 i = 1
 while run:
 
-    screen.fill((i % 255, 255, 255))
+    screen.fill((255, 255, 255))
 
     if ready:
 
@@ -88,7 +87,7 @@ while run:
     else:
         screen.blit(textclick, textPos)
 
-    for event in pygame.event.get():  # must have conponent
+    for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
         if event.type == MOUSEBUTTONDOWN and not clicked:
