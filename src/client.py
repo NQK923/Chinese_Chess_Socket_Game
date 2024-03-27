@@ -1,12 +1,14 @@
 import socket
 import pickle
 
+
 class Network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.port = 5050
 
-        self.serverAddress = "192.168.1.195"
+        #self.serverAddress = "192.168.1.195"
+        self.serverAddress = "192.168.41.150"
         print("Initializing now...")
         self.connect()
 
@@ -49,6 +51,7 @@ class Network:
         except socket.error as e:
             print(f"Error receiving data: {e}")
             return None
+
 
 if __name__ == "__main__":
     network = Network()

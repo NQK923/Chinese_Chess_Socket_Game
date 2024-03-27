@@ -23,24 +23,28 @@ class Piece(pygame.sprite.Sprite):
         self.initialize()
 
     def initialize(self):
-        self.image = pygame.Surface((self.cellSize, self.cellSize), pygame.SRCALPHA)
+        self.image = pygame.Surface(
+            (self.cellSize, self.cellSize), pygame.SRCALPHA)
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        imagePath = os.path.join(script_dir, "imgs", f"{self.type}_{self.playerType}.png")
+        imagePath = os.path.join(
+            script_dir, "imgs", f"{self.type}_{self.playerType}.png")
 
-        pieceImage = pygame.image.load(imagePath).convert_alpha()
-        pieceImage = pygame.transform.scale(pieceImage, (self.cellSize, self.cellSize))
-        self.image.blit(pieceImage, (0, 0))
-        self.rect = self.image.get_rect(center=((self.X+1)*self.cellSize, (self.Y+1)*self.cellSize))
-
-    def reDrawImage(self):
-        self.image.fill(self.empty)
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        imagePath = os.path.join(script_dir, "imgs", f"{self.type}_{self.playerType}.png")
         pieceImage = pygame.image.load(imagePath).convert_alpha()
         pieceImage = pygame.transform.scale(
             pieceImage, (self.cellSize, self.cellSize))
         self.image.blit(pieceImage, (0, 0))
+        self.rect = self.image.get_rect(
+            center=((self.X+1)*self.cellSize, (self.Y+1)*self.cellSize))
 
+    def reDrawImage(self):
+        self.image.fill(self.empty)
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        imagePath = os.path.join(
+            script_dir, "imgs", f"{self.type}_{self.playerType}.png")
+        pieceImage = pygame.image.load(imagePath).convert_alpha()
+        pieceImage = pygame.transform.scale(
+            pieceImage, (self.cellSize, self.cellSize))
+        self.image.blit(pieceImage, (0, 0))
 
     def draw(self, screen):
         if not self.selected:
@@ -192,7 +196,6 @@ class Piece(pygame.sprite.Sprite):
         for i in moves:
             if PiecesObject[self.Y+i[1]][self.X+i[0]] == None or PiecesObject[self.Y+i[1]][self.X+i[0]].playerType != self.playerType:
                 moves2.append((self.X+i[0], self.Y+i[1]))
-        # print(moves2)
         return moves2
 
     def isInside(self, rowNumber, colomnNumber, i):

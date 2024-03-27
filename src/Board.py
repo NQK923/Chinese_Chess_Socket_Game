@@ -61,7 +61,6 @@ class Board:
         for i in range(2, self.Row+1):
             pygame.draw.line(self.surf, self.Color_line, (self.cellSize, i *
                              self.cellSize), ((self.Column+1)*self.cellSize, i*self.cellSize))
-        # draw the two cross
         pygame.draw.line(self.surf, self.Color_line, (4*self.cellSize,
                          self.cellSize), (6*self.cellSize, 3*self.cellSize))
         pygame.draw.line(self.surf, self.Color_line, (6*self.cellSize,
@@ -185,6 +184,39 @@ class Board:
     def loadBoardData(self, data):
         self.setFromTo(data[0], data[1])
         self.print()
+    def isCheckmate(self):
+        king_position = None
+        for i, row in enumerate(self.pieces):
+            for j, piece in enumerate(row):
+                if piece is not None and piece.type == 0 and piece.playerType == self.currentPlayer:
+                    king_position = (j, i)
+                    break
+            if king_position:
+                break
+
+        if not king_position:
+            return True
+
+        potential_moves = self.pieces[king_position[1]][king_position[0]].potentialMove(self.Row, self.Column, self.pieces)
+
+        for move in potential_moves:
+            if not self.isMoveChecked(move, king_position):
+                return False
+
+        return True
+    def isMoveChecked(self, moveTo, king_position):
+        opponentType = 1 - self.currentPlayer
+        for row in range(self.Row+1):
+            for col in range(self.Column+1):
+                piece = self.pieces[row][col]
+                # Nếu tìm thấy một quân cờ của đối phương
+                if piece is not None and piece.playerType == opponentType:
+                    potential_moves = piece.potentialMove(self.Row, self.Column, self.pieces)
+                    potential_moves_on_board = [(piece.X + move[0], piece.Y + move[1]) for move in potential_moves]
+
+                    if moveTo in potential_moves_on_board:
+                        return True
+        return False
 
 
 if __name__ == "__main__":

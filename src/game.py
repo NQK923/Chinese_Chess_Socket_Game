@@ -8,6 +8,7 @@ import threading
 
 
 def main(screen, ID):
+    font = pygame.font.SysFont("arial", 24)
     pygame.display.flip()
     board = Board(n, ID, screen, 50)
     board.initializePieces()
@@ -28,6 +29,14 @@ def main(screen, ID):
             if events.type == MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 board.getClicked(pos)
+                if board.isCheckmate():
+                    winner = "Black" if board.currentPlayer == 0 else "Red"
+                    textWin = font.render(f"{winner} wins by checkmate!", True, (0, 128, 0))
+                    textRect = textWin.get_rect()
+                    textRect.center = (screen.get_width() // 2, screen.get_height() // 2)
+                    screen.blit(textWin, textRect)
+                    pygame.display.update()
+                    pygame.time.delay(5000)
             if events.type == pygame.KEYDOWN:
                 if events.key == pygame.K_ESCAPE:
                     board.deselect()

@@ -4,7 +4,9 @@ import pickle
 
 PORT = 5050
 DISCONNECTMESSAGE = "!disconnect"
-SERVER = "192.168.1.195"
+#SERVER = "192.168.1.195"
+SERVER = "192.168.41.150"
+
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -14,6 +16,7 @@ server.bind(ADDR)
 
 BoardData = None
 chessPlayer = []
+
 
 def handle_client(socketNumber, address, ID):
     print(f"{address} player connected")
@@ -27,6 +30,7 @@ def handle_client(socketNumber, address, ID):
             connected = False
 
     socketNumber.close()
+
 
 def start():
     global counter
@@ -45,5 +49,6 @@ def start():
             thread.start()
             counter += 1
             print(f"{counter} connections active")
+
 
 start()
