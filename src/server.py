@@ -4,8 +4,8 @@ import pickle
 
 PORT = 5050
 DISCONNECTMESSAGE = "!disconnect"
-#SERVER = "192.168.1.195"
-SERVER = "192.168.41.150"
+SERVER = "192.168.1.23"
+#SERVER = "192.168.41.150"
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

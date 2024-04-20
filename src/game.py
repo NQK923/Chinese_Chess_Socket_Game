@@ -2,9 +2,9 @@ import pygame
 import sys
 from pygame.locals import *
 from Board import Board
-from Piece import Piece
 from client import Network
 import threading
+
 
 
 def main(screen, ID):

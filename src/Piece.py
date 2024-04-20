@@ -1,12 +1,11 @@
 import pygame
 import os
+
 from pygame import gfxdraw
 PieceName0 = {0: "将", 1: "士", 2: "象", 3: "馬", 4: "車", 5: "砲", 6: "卒"}
 PieceName1 = {0: "帥", 1: "仕", 2: "相", 3: "傌", 4: "俥 ", 5: "炮", 6: "兵"}
 potentialMoveDict = {0: [(-1, 0), (1, 0), (0, -1), (0, 1)], 1: [(-1, -1), (1, 1), (-1, 1), (1, -1)], 2: [(-2, -2), (2, 2),
                                                                                                          (-2, 2), (2, -2)], 3: [(-1, 2), (1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)], 6: [(-1, 0), (1, 0)]}
-
-
 class Piece(pygame.sprite.Sprite):
 
     def __init__(self, boardSurface, _type, playerType, initX, initY, size):

@@ -1,3 +1,4 @@
+
 import socket
 import pickle
 
@@ -55,7 +56,6 @@ class Network:
 
 if __name__ == "__main__":
     network = Network()
-    print("Hi, I am the client.")
 
     while True:
         data = network.receive()

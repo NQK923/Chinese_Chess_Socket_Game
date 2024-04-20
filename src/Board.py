@@ -1,6 +1,7 @@
 import pygame
 from Piece import Piece
 from Hint import Hint
+
 initialPosition = {0: [(4, 0)], 1: [(3, 0), (5, 0)], 2: [(2, 0), (6, 0)], 3: [(1, 0), (7, 0)], 4: [
     (0, 0), (8, 0)], 5: [(1, 2), (7, 2)], 6: [(0, 3), (2, 3), (4, 3), (6, 3), (8, 3)]}
 
@@ -184,6 +185,7 @@ class Board:
     def loadBoardData(self, data):
         self.setFromTo(data[0], data[1])
         self.print()
+
     def isCheckmate(self):
         king_position = None
         for i, row in enumerate(self.pieces):
@@ -197,23 +199,25 @@ class Board:
         if not king_position:
             return True
 
-        potential_moves = self.pieces[king_position[1]][king_position[0]].potentialMove(self.Row, self.Column, self.pieces)
+        potential_moves = self.pieces[king_position[1]][king_position[0]].potentialMove(
+            self.Row, self.Column, self.pieces)
 
         for move in potential_moves:
             if not self.isMoveChecked(move, king_position):
                 return False
 
         return True
+
     def isMoveChecked(self, moveTo, king_position):
         opponentType = 1 - self.currentPlayer
         for row in range(self.Row+1):
             for col in range(self.Column+1):
                 piece = self.pieces[row][col]
-                # Nếu tìm thấy một quân cờ của đối phương
                 if piece is not None and piece.playerType == opponentType:
-                    potential_moves = piece.potentialMove(self.Row, self.Column, self.pieces)
-                    potential_moves_on_board = [(piece.X + move[0], piece.Y + move[1]) for move in potential_moves]
-
+                    potential_moves = piece.potentialMove(
+                        self.Row, self.Column, self.pieces)
+                    potential_moves_on_board = [
+                        (piece.X + move[0], piece.Y + move[1]) for move in potential_moves]
                     if moveTo in potential_moves_on_board:
                         return True
         return False
