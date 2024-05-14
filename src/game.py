@@ -21,9 +21,10 @@ def main(screen, ID):
         board.drawBoard()
         board.drawPieces()
         board.drawHints()
-        if game_over:
+        if game_over or board.gameOver:
             winner = "Black" if board.currentPlayer == 1 else "Red"
-            textWin = font.render(f"{winner} wins by checkmate!", True, (0, 128, 0))
+            message = "Your opponent has disconnected. You win!" if board.gameOver else f"{winner} wins by checkmate!"
+            textWin = font.render(message, True, (0, 128, 0))
             textRect = textWin.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
             screen.blit(textWin, textRect)
             replayText = font.render("Press R to replay", True, (0, 0, 128))
@@ -36,7 +37,7 @@ def main(screen, ID):
             if events.type == QUIT:
                 print("quit")
                 sys.exit(0)
-            if not game_over:
+            if not game_over and not board.game_over:
                 if events.type == MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     board.getClicked(pos)
@@ -78,10 +79,17 @@ def wait(client):
 
 def update(client, boardChess):
     while True:
-        print("Receiving the data from server")
-        data = client.receive()
-        print(data)
-        boardChess.loadBoardData(data)
+        try:
+            print("Receiving the data from server")
+            data = client.receive()
+            if isinstance(data, dict) and data.get("disconnect"):
+                boardChess.gameOver("Your opponent has disconnected. You win!")
+                break
+            print(data)
+            boardChess.loadBoardData(data)
+        except:
+            break
+
 
 def draw_button(screen, text, position, size=(200, 50)):
     font = pygame.font.SysFont("arial", 24)

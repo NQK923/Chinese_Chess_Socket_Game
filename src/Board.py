@@ -223,6 +223,10 @@ class Board:
                     if moveTo in potential_moves_on_board:
                         return True
         return False
+    
+    def gameOver(self, message):
+        self.game_over = True
+        self.game_over_message = message
 
 
 if __name__ == "__main__":

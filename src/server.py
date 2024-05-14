@@ -22,14 +22,23 @@ def handle_client(socketNumber, address, ID):
     print(f"{address} player connected")
     connected = True
     while connected:
-        data = socketNumber.recv(4098)
-        if data:
-            chessPlayer[(1+ID) % 2].send(data)
-            print(pickle.loads(data))
-        else:
+        try:
+            data = socketNumber.recv(4098)
+            if data:
+                chessPlayer[(1+ID) % 2].send(data)
+                print(pickle.loads(data))
+            else:
+                connected = False
+        except:
             connected = False
+    try:
+        chessPlayer[(1+ID) % 2].send(pickle.dumps({"disconnect": True}))
+    except:
+        pass
 
     socketNumber.close()
+    chessPlayer.remove(socketNumber)
+    print(f"{address} player disconnected")
 
 
 def start():
