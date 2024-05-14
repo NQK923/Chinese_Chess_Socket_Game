@@ -11,7 +11,6 @@ class Piece(pygame.sprite.Sprite):
     def __init__(self, boardSurface, _type, playerType, initX, initY, size):
         super().__init__()
         self.cellSize = size
-
         self.type = _type
         self.playerType = playerType
         self.X = initX

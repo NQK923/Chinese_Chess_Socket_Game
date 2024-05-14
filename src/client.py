@@ -9,7 +9,7 @@ class Network:
         self.port = 5050
 
         #self.serverAddress = "192.168.1.195"
-        self.serverAddress = "192.168.41.150"
+        self.serverAddress = "192.168.1.40"
         print("Initializing now...")
         self.connect()
 

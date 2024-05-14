@@ -195,7 +195,6 @@ class Board:
                     break
             if king_position:
                 break
-
         if not king_position:
             return True
 
@@ -210,14 +209,17 @@ class Board:
 
     def isMoveChecked(self, moveTo, king_position):
         opponentType = 1 - self.currentPlayer
+        temp_pieces = [row[:] for row in self.pieces]
+
+        temp_pieces[king_position[1]][king_position[0]] = None
+        temp_pieces[moveTo[1]][moveTo[0]] = Piece(self.surf, 0, self.currentPlayer, moveTo[0], moveTo[1], self.cellSize)
+
         for row in range(self.Row+1):
             for col in range(self.Column+1):
-                piece = self.pieces[row][col]
+                piece = temp_pieces[row][col]
                 if piece is not None and piece.playerType == opponentType:
-                    potential_moves = piece.potentialMove(
-                        self.Row, self.Column, self.pieces)
-                    potential_moves_on_board = [
-                        (piece.X + move[0], piece.Y + move[1]) for move in potential_moves]
+                    potential_moves = piece.potentialMove(self.Row, self.Column, temp_pieces)
+                    potential_moves_on_board = [(piece.X, piece.Y) for move in potential_moves]
                     if moveTo in potential_moves_on_board:
                         return True
         return False
