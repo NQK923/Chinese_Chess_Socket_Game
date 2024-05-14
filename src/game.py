@@ -13,36 +13,45 @@ def main(screen, ID):
     pygame.display.flip()
     thread2 = threading.Thread(target=update, args=(n, board))
     thread2.start()
+    
+    game_over = False
 
     while True:
         screen.fill((255, 255, 255))
         board.drawBoard()
         board.drawPieces()
         board.drawHints()
+        if game_over:
+            winner = "Black" if board.currentPlayer == 1 else "Red"
+            textWin = font.render(f"{winner} wins by checkmate!", True, (0, 128, 0))
+            textRect = textWin.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+            screen.blit(textWin, textRect)
+            replayText = font.render("Press R to replay", True, (0, 0, 128))
+            replayRect = replayText.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 40))
+            screen.blit(replayText, replayRect)
+        
         pygame.display.update()
+        
         for events in pygame.event.get():
             if events.type == QUIT:
                 print("quit")
                 sys.exit(0)
-            if events.type == MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                board.getClicked(pos)
-                if board.isCheckmate():
-                    winner = "Black" if board.currentPlayer == 1 else "Red"
-                    textWin = font.render(f"{winner} wins by checkmate!", True, (0, 128, 0))
-                    textRect = textWin.get_rect()
-                    textRect.center = (screen.get_width() // 2, screen.get_height() // 2)
-                    screen.blit(textWin, textRect)
-                    pygame.display.update()
-                    pygame.time.delay(5000)
-            if events.type == pygame.KEYDOWN:
-                if events.key == pygame.K_ESCAPE:
-                    board.deselect()
-                if events.key == pygame.K_p:
-                    board.setFromTo((0, 0), (0, 1))
-                if events.key == pygame.K_o:
-                    board.setFromTo((0, 1), (0, 0))
-
+            if not game_over:
+                if events.type == MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    board.getClicked(pos)
+                    if board.isCheckmate():
+                        game_over = True
+                if events.type == pygame.KEYDOWN:
+                    if events.key == pygame.K_ESCAPE:
+                        board.deselect()
+                    if events.key == pygame.K_p:
+                        board.setFromTo((0, 0), (0, 1))
+                    if events.key == pygame.K_o:
+                        board.setFromTo((0, 1), (0, 0))
+            else:
+                if events.type == pygame.KEYDOWN and events.key == pygame.K_r:
+                    return
 
 RED = 0
 BLACK = 1
@@ -78,9 +87,9 @@ def draw_button(screen, text, position, size=(200, 50)):
     font = pygame.font.SysFont("arial", 24)
     button_surf = pygame.Surface(size)
     button_rect = button_surf.get_rect(center=position)
-    button_surf.fill((0, 128, 0))  # Màu xanh lá cây
-    pygame.draw.rect(button_surf, (0, 0, 0), button_rect, 2)  # Viền đen
-    text_surf = font.render(text, True, (255, 255, 255))  # Chữ màu trắng
+    button_surf.fill((0, 128, 0))
+    pygame.draw.rect(button_surf, (0, 0, 0), button_rect, 2)
+    text_surf = font.render(text, True, (255, 255, 255))
     text_rect = text_surf.get_rect(center=(size[0] // 2, size[1] // 2))
     button_surf.blit(text_surf, text_rect)
     screen.blit(button_surf, button_rect.topleft)
@@ -98,8 +107,9 @@ while run:
         quit_button_rect = draw_button(screen, "Quit", (screen.get_width() // 2, 300))
     elif ready:
         main(screen, playerType)
-        run = False
-        break
+        menu = True
+        ready = False
+        clicked = False
     elif clicked:
         i += 5
         screen.blit(textWait, textPos)
