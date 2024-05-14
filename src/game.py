@@ -5,7 +5,11 @@ from Board import Board
 from client import Network
 import threading
 
+# Thêm một biến cờ để kiểm soát việc dừng các luồng
+stop_threads = False
+
 def main(screen, ID):
+    global stop_threads
     font = pygame.font.SysFont("arial", 24)
     pygame.display.flip()
     board = Board(n, ID, screen, 50)
@@ -21,13 +25,12 @@ def main(screen, ID):
         board.drawBoard()
         board.drawPieces()
         board.drawHints()
-        if game_over or board.gameOver:
+        if game_over:
             winner = "Black" if board.currentPlayer == 1 else "Red"
-            message = "Your opponent has disconnected. You win!" if board.gameOver else f"{winner} wins by checkmate!"
-            textWin = font.render(message, True, (0, 128, 0))
+            textWin = font.render(f"{winner} wins by checkmate!", True, (128, 0, 0))
             textRect = textWin.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
             screen.blit(textWin, textRect)
-            replayText = font.render("Press R to replay", True, (0, 0, 128))
+            replayText = font.render("Press R to replay", True, (128, 0, 0))
             replayRect = replayText.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 40))
             screen.blit(replayText, replayRect)
         
@@ -36,8 +39,10 @@ def main(screen, ID):
         for events in pygame.event.get():
             if events.type == QUIT:
                 print("quit")
+                stop_threads = True
+                pygame.quit()
                 sys.exit(0)
-            if not game_over and not board.game_over:
+            if not game_over:
                 if events.type == MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     board.getClicked(pos)
@@ -53,6 +58,15 @@ def main(screen, ID):
             else:
                 if events.type == pygame.KEYDOWN and events.key == pygame.K_r:
                     return
+
+def update(client, boardChess):
+    global stop_threads
+    while not stop_threads:
+        print("Receiving the data from server")
+        data = client.receive()
+        if data:
+            print(data)
+            boardChess.loadBoardData(data)
 
 RED = 0
 BLACK = 1
@@ -76,20 +90,6 @@ def wait(client):
     playerType = int(client.receiveID())
     print("playerType ID is ", playerType)
     ready = True
-
-def update(client, boardChess):
-    while True:
-        try:
-            print("Receiving the data from server")
-            data = client.receive()
-            if isinstance(data, dict) and data.get("disconnect"):
-                boardChess.gameOver("Your opponent has disconnected. You win!")
-                break
-            print(data)
-            boardChess.loadBoardData(data)
-        except:
-            break
-
 
 def draw_button(screen, text, position, size=(200, 50)):
     font = pygame.font.SysFont("arial", 24)
@@ -127,6 +127,9 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+            stop_threads = True
+            pygame.quit()
+            sys.exit(0)
         if event.type == MOUSEBUTTONDOWN:
             if menu:
                 if start_button_rect.collidepoint(event.pos):
@@ -137,6 +140,9 @@ while run:
                     menu = False
                 elif quit_button_rect.collidepoint(event.pos):
                     run = False
+                    stop_threads = True
+                    pygame.quit()
+                    sys.exit(0)
             elif not clicked:
                 n = Network()
                 thread = threading.Thread(target=wait, args=(n,))
@@ -145,5 +151,6 @@ while run:
 
     pygame.display.flip()
 
+stop_threads = True
 pygame.quit()
 sys.exit()

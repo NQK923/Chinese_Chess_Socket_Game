@@ -224,10 +224,6 @@ class Board:
                         return True
         return False
     
-    def gameOver(self, message):
-        self.game_over = True
-        self.game_over_message = message
-
 
 if __name__ == "__main__":
     pygame.init()
