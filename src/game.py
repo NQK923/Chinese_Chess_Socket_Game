@@ -85,8 +85,8 @@ textclick = font.render("Click to join", True, (255, 0, 0))
 textPos = textWait.get_rect()
 textPos.center = (screen.get_rect().centerx, 100)
 
-
-background_path = os.path.join("imgs", "background.png")
+script_dir = os.path.dirname(os.path.realpath(__file__))
+background_path = os.path.join(script_dir,"imgs", "background.png")
 
 background = pygame.image.load(background_path)
 background = pygame.transform.scale(background, (500, 600))
@@ -97,12 +97,12 @@ def wait(client):
     print("playerType ID is ", playerType)
     ready = True
 
-def draw_button(screen, text, position, size=(200, 50)):
-    font = pygame.font.SysFont("arial", 24)
+def draw_button(screen, text, position, size=(240, 70)):
+    font = pygame.font.SysFont("arial", 36)
     button_surf = pygame.Surface(size)
     button_rect = button_surf.get_rect(center=position)
-    button_surf.fill((0, 128, 0))
-    pygame.draw.rect(button_surf, (0, 0, 0), button_rect, 2)
+    button_surf.fill((227, 211, 51))
+    pygame.draw.rect(button_surf, (0, 0, 0), button_rect, 2,border_radius=15)
     text_surf = font.render(text, True, (255, 255, 255))
     text_rect = text_surf.get_rect(center=(size[0] // 2, size[1] // 2))
     button_surf.blit(text_surf, text_rect)
