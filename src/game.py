@@ -1,3 +1,4 @@
+import os
 import pygame
 import sys
 from pygame.locals import *
@@ -27,10 +28,10 @@ def main(screen, ID):
         if game_over:
             winner = "Black" if board.currentPlayer == 1 else "Red"
             textWin = font.render(f"{winner} wins by checkmate!", True, (128, 0, 0))
-            textRect = textWin.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+            textRect = textWin.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2-20))
             screen.blit(textWin, textRect)
             replayText = font.render("Press R to replay", True, (128, 0, 0))
-            replayRect = replayText.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 40))
+            replayRect = replayText.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 20))
             screen.blit(replayText, replayRect)
         
         pygame.display.update()
@@ -84,6 +85,12 @@ textclick = font.render("Click to join", True, (255, 0, 0))
 textPos = textWait.get_rect()
 textPos.center = (screen.get_rect().centerx, 100)
 
+
+background_path = os.path.join("imgs", "background.png")
+
+background = pygame.image.load(background_path)
+background = pygame.transform.scale(background, (500, 600))
+
 def wait(client):
     global playerType, ready
     playerType = int(client.receiveID())
@@ -108,7 +115,7 @@ start_button_rect = None
 quit_button_rect = None
 
 while run:
-    screen.fill((255, 255, 255))
+    screen.blit(background, (0, 0))
     if menu:
         start_button_rect = draw_button(screen, "Start", (screen.get_width() // 2, 200))
         quit_button_rect = draw_button(screen, "Quit", (screen.get_width() // 2, 300))

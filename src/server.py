@@ -6,16 +6,12 @@ PORT = 5050
 DISCONNECTMESSAGE = "!disconnect"
 SERVER = socket.gethostbyname(socket.gethostname())
 
-
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 ADDR = (SERVER, PORT)
-
 server.bind(ADDR)
 
 BoardData = None
 chessPlayer = []
-
 
 def handle_client(socketNumber, address, ID):
     print(f"{address} player connected")
@@ -39,7 +35,6 @@ def handle_client(socketNumber, address, ID):
     chessPlayer.remove(socketNumber)
     print(f"{address} player disconnected")
 
-
 def start():
     global counter
     counter = 0
@@ -52,11 +47,9 @@ def start():
             if len(chessPlayer) == 2:
                 for i in range(len(chessPlayer)):
                     chessPlayer[i].send(str(i).encode())
-            thread = threading.Thread(target=handle_client, args=(
-                clientSocketNumber, addr, counter))
+            thread = threading.Thread(target=handle_client, args=(clientSocketNumber, addr, counter))
             thread.start()
             counter += 1
             print(f"{counter} connections active")
-
 
 start()
