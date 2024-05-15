@@ -5,7 +5,6 @@ from Board import Board
 from client import Network
 import threading
 
-# Thêm một biến cờ để kiểm soát việc dừng các luồng
 stop_threads = False
 
 def main(screen, ID):
