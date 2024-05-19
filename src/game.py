@@ -2,11 +2,13 @@ import os
 import pygame
 import sys
 from pygame.locals import *
-from Board import Board  # Make sure the Board module is in the same directory
-from client import Network  # Make sure the client module is in the same directory
+from Board import Board
+from client import Network
 import threading
 
 stop_threads = False
+playerType = -1
+ready_event = threading.Event()
 
 def main(screen, ID):
     global stop_threads
@@ -17,7 +19,7 @@ def main(screen, ID):
     pygame.display.flip()
     thread2 = threading.Thread(target=update, args=(n, board))
     thread2.start()
-    
+
     game_over = False
 
     while True:
@@ -33,9 +35,9 @@ def main(screen, ID):
             replayText = font.render("Press R to replay", True, (128, 0, 0))
             replayRect = replayText.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 + 20))
             screen.blit(replayText, replayRect)
-        
+
         pygame.display.update()
-        
+
         for events in pygame.event.get():
             if events.type == QUIT:
                 print("quit")
@@ -51,10 +53,6 @@ def main(screen, ID):
                 if events.type == pygame.KEYDOWN:
                     if events.key == pygame.K_ESCAPE:
                         board.deselect()
-                    if events.key == pygame.K_p:
-                        board.setFromTo((0, 0), (0, 1))
-                    if events.key == pygame.K_o:
-                        board.setFromTo((0, 1), (0, 0))
             else:
                 if events.type == pygame.KEYDOWN and events.key == pygame.K_r:
                     return
@@ -65,18 +63,13 @@ def update(client, boardChess):
         print("Receiving the data from server")
         data = client.receive()
         if data:
-            print(data)
             boardChess.loadBoardData(data)
-
-RED = 0
-BLACK = 1
-playerType = -1
 
 pygame.init()
 screen = pygame.display.set_mode((500, 600))
 pygame.display.set_caption("Chinese Chess Game")
 run = True
-ready = False
+menu = True
 clicked = False
 font = pygame.font.SysFont("hiraginosansgbttc", 30)
 textWait = font.render("Wait for other to join", True, (255, 0, 0))
@@ -86,16 +79,16 @@ textPos = textWait.get_rect()
 textPos.center = (screen.get_rect().centerx, 100)
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-background_path = os.path.join(script_dir,"imgs", "background.png")
+background_path = os.path.join(script_dir, "imgs", "background.png")
 
 background = pygame.image.load(background_path)
 background = pygame.transform.scale(background, (500, 600))
 
 def wait(client):
-    global playerType, ready
+    global playerType, ready_event
     playerType = int(client.receiveID())
     print("playerType ID is ", playerType)
-    ready = True
+    ready_event.set()
 
 def draw_text_with_border(screen, text, font, position, text_color, border_color):
     text_surface = font.render(text, True, text_color)
@@ -113,8 +106,6 @@ def draw_button(screen, text, position, size=(240, 70)):
     draw_text_with_border(screen, text, font, text_rect.topleft, (255, 255, 255), (0, 0, 0))
     return text_rect
 
-i = 1
-menu = True
 start_button_rect = None
 quit_button_rect = None
 
@@ -125,13 +116,12 @@ while run:
         draw_text_with_border(screen, "Chinese Chess", title_font, (screen.get_width() // 2 - 145, 100), (255, 255, 255), (0, 0, 0))
         start_button_rect = draw_button(screen, "Start", (screen.get_width() // 2, 230))
         quit_button_rect = draw_button(screen, "Quit", (screen.get_width() // 2, 330))
-    elif ready:
+    elif ready_event.is_set():
         main(screen, playerType)
         menu = True
-        ready = False
+        ready_event.clear()
         clicked = False
     elif clicked:
-        i += 5
         screen.blit(textWait, textPos)
     else:
         screen.blit(textclick, textPos)

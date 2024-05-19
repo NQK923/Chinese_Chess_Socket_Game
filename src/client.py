@@ -29,9 +29,7 @@ class Network:
     def send(self, data):
         try:
             data_string = pickle.dumps(data)
-            print("Sending data:", data)
             self.client.send(data_string)
-            print("Data sent successfully.")
         except socket.error as e:
             print(f"Error sending data: {e}")
 
