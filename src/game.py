@@ -2,8 +2,8 @@ import os
 import pygame
 import sys
 from pygame.locals import *
-from Board import Board
-from client import Network
+from Board import Board  # Make sure the Board module is in the same directory
+from client import Network  # Make sure the client module is in the same directory
 import threading
 
 stop_threads = False
@@ -42,12 +42,12 @@ def main(screen, ID):
                 stop_threads = True
                 pygame.quit()
                 sys.exit(0)
+            if board.isCheckmate():
+                game_over = True
             if not game_over:
                 if events.type == MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     board.getClicked(pos)
-                    if board.isCheckmate():
-                        game_over = True
                 if events.type == pygame.KEYDOWN:
                     if events.key == pygame.K_ESCAPE:
                         board.deselect()
@@ -97,17 +97,21 @@ def wait(client):
     print("playerType ID is ", playerType)
     ready = True
 
+def draw_text_with_border(screen, text, font, position, text_color, border_color):
+    text_surface = font.render(text, True, text_color)
+    border_surface = font.render(text, True, border_color)
+    border_positions = [(position[0] - 1, position[1]), (position[0] + 1, position[1]),
+                        (position[0], position[1] - 1), (position[0], position[1] + 1)]
+    for bp in border_positions:
+        screen.blit(border_surface, bp)
+    screen.blit(text_surface, position)
+
 def draw_button(screen, text, position, size=(240, 70)):
-    font = pygame.font.SysFont("arial", 36)
-    button_surf = pygame.Surface(size)
-    button_rect = button_surf.get_rect(center=position)
-    button_surf.fill((227, 211, 51))
-    pygame.draw.rect(button_surf, (0, 0, 0), button_rect, 2,border_radius=15)
+    font = pygame.font.SysFont("arial", 40)
     text_surf = font.render(text, True, (255, 255, 255))
-    text_rect = text_surf.get_rect(center=(size[0] // 2, size[1] // 2))
-    button_surf.blit(text_surf, text_rect)
-    screen.blit(button_surf, button_rect.topleft)
-    return button_rect
+    text_rect = text_surf.get_rect(center=position)
+    draw_text_with_border(screen, text, font, text_rect.topleft, (255, 255, 255), (0, 0, 0))
+    return text_rect
 
 i = 1
 menu = True
@@ -117,8 +121,10 @@ quit_button_rect = None
 while run:
     screen.blit(background, (0, 0))
     if menu:
-        start_button_rect = draw_button(screen, "Start", (screen.get_width() // 2, 200))
-        quit_button_rect = draw_button(screen, "Quit", (screen.get_width() // 2, 300))
+        title_font = pygame.font.SysFont("arial", 54)
+        draw_text_with_border(screen, "Chinese Chess", title_font, (screen.get_width() // 2 - 145, 100), (255, 255, 255), (0, 0, 0))
+        start_button_rect = draw_button(screen, "Start", (screen.get_width() // 2, 230))
+        quit_button_rect = draw_button(screen, "Quit", (screen.get_width() // 2, 330))
     elif ready:
         main(screen, playerType)
         menu = True
